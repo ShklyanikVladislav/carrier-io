@@ -7,6 +7,8 @@ node{
     stage("configure") {
         deleteDir()
         sh "mkdir reports"
+        sh "cd ${WORKSPACE}/"
+        sh "svn checkout https://github.com/ShklyanikVladislav/carrier-io/trunk/tests"
         
     }
     stage("run tests") {
@@ -20,8 +22,7 @@ node{
         docker.image("getcarrier/perfmeter:latest").inside(dockerParamsString){
             sh "mkdir /tmp/reports"
             sh "pwd"
-            sh """cd  /mnt/ && svn checkout https://github.com/ShklyanikVladislav/carrier-io/trunk/tests &&
-                  cd / && ls -la &&  /launch.sh  -n -t /mnt/tests/blazedemo.jmx \\
+            sh """cd / && ls -la &&  /launch.sh  -n -t ${WORKSPACE}/tests/blazedemo.jmx \\
                   -j /tmp/reports/jmeter_${JOB_NAME}_${BUILD_ID}.log \\
                   -l /tmp/reports/jmeter_${JOB_NAME}_${BUILD_ID}.jtl \\
                   -e -o /tmp/reports/HtmlReport_${JOB_NAME}_${BUILD_ID} \\
